@@ -7,6 +7,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 using OrchardCore.Admin;
 using OrchardCore.Environment.Shell;
+using OrchardCore.Environment.Shell.Distributed;
 using OrchardCore.Modules;
 using OrchardCore.Modules.FileProviders;
 using OrchardCore.Mvc.Core.Utilities;
@@ -108,10 +109,10 @@ namespace OrchardCore.Tenants
                 DefaultContentType = "application/octet-stream",
                 ServeUnknownFileTypes = true,
 
-                // Cache the tenant static files for 7 days
+                // Cache the tenant static files for 30 days
                 OnPrepareResponse = ctx =>
                 {
-                    ctx.Context.Response.Headers[HeaderNames.CacheControl] = "public, max-age=2592000, s-max-age=31557600";
+                    ctx.Context.Response.Headers[HeaderNames.CacheControl] = $"public, max-age={TimeSpan.FromDays(30).TotalSeconds}, s-max-age={TimeSpan.FromDays(365.25).TotalSeconds}";
                 }
             });
         }
@@ -119,6 +120,15 @@ namespace OrchardCore.Tenants
         private string GetContentRoot(ShellOptions shellOptions, ShellSettings shellSettings)
         {
             return Path.Combine(shellOptions.ShellsApplicationDataPath, shellOptions.ShellsContainerName, shellSettings.Name, AssetsPath);
+        }
+    }
+
+    [Feature("OrchardCore.Tenants.Distributed")]
+    public class DistributedStartup : StartupBase
+    {
+        public override void ConfigureServices(IServiceCollection services)
+        {
+            services.AddSingleton<DistributedShellMarkerService>();
         }
     }
 }

@@ -1,5 +1,6 @@
 @model OrchardCore.Facebook.Widgets.ViewModels.FacebookPluginPartViewModel
 
+<style asp-name="codemirror"></style>
 <script asp-name="codemirror" depends-on="admin" at="Foot"></script>
 <script asp-name="codemirror-mode-javascript" at="Foot"></script>
 <script asp-name="codemirror-addon-display-autorefresh" at="Foot"></script>
@@ -30,8 +31,8 @@ $(function () {
         mode: { name: "liquid" },
     });
 
-    editor.on('change', function (cm) {
-        document.getElementById('@Html.IdFor(x => x.Liquid)').value = cm.getValue();
+    editor.on('change', function (cmEditor) {
+        cmEditor.save()
         $(document).trigger('contentpreview:render');
     });
 });

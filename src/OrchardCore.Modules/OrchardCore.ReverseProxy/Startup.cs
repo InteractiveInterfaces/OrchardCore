@@ -9,7 +9,9 @@ using OrchardCore.Modules;
 using OrchardCore.Navigation;
 using OrchardCore.ReverseProxy.Drivers;
 using OrchardCore.ReverseProxy.Services;
+using OrchardCore.ReverseProxy.Settings;
 using OrchardCore.Settings;
+using OrchardCore.Settings.Deployment;
 
 namespace OrchardCore.ReverseProxy
 {
@@ -31,6 +33,15 @@ namespace OrchardCore.ReverseProxy
 
             services.TryAddEnumerable(ServiceDescriptor
                 .Transient<IConfigureOptions<ForwardedHeadersOptions>, ForwardedHeadersOptionsConfiguration>());
+        }
+    }
+
+    [RequireFeatures("OrchardCore.Deployment")]
+    public class DeploymentStartup : StartupBase
+    {
+        public override void ConfigureServices(IServiceCollection services)
+        {
+            services.AddSiteSettingsPropertyDeploymentStep<ReverseProxySettings, DeploymentStartup>(S => S["Reverse Proxy settings"], S => S["Exports the Reverse Proxy settings."]);
         }
     }
 }
