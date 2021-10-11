@@ -412,6 +412,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OrchardCore.Email.Core", "s
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TheIntIntTheme", "src\OrchardCore.Themes\TheIntIntTheme\TheIntIntTheme.csproj", "{9D9311B1-D3C4-48F2-9FDA-FFEEFD02277F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheMusicBandTheme", "src\OrchardCore.Themes\TheMusicBandTheme\TheMusicBandTheme.csproj", "{CBFCC32E-C40C-4A50-84BE-8F1D78EAE084}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -1126,6 +1128,10 @@ Global
 		{9D9311B1-D3C4-48F2-9FDA-FFEEFD02277F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9D9311B1-D3C4-48F2-9FDA-FFEEFD02277F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9D9311B1-D3C4-48F2-9FDA-FFEEFD02277F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CBFCC32E-C40C-4A50-84BE-8F1D78EAE084}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBFCC32E-C40C-4A50-84BE-8F1D78EAE084}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBFCC32E-C40C-4A50-84BE-8F1D78EAE084}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBFCC32E-C40C-4A50-84BE-8F1D78EAE084}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1322,6 +1328,7 @@ Global
 		{67509F89-E3D6-4FF9-98EC-A9519937A364} = {A066395F-6F73-45DC-B5A6-B4E306110DCE}
 		{D00CF459-396D-49C9-92E2-3FD3C2A59847} = {F23AC6C2-DE44-4699-999D-3C478EF3D691}
 		{9D9311B1-D3C4-48F2-9FDA-FFEEFD02277F} = {AF3BADEA-CC93-4116-B3C1-F8D074EBEE4F}
+		{CBFCC32E-C40C-4A50-84BE-8F1D78EAE084} = {AF3BADEA-CC93-4116-B3C1-F8D074EBEE4F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {46A1D25A-78D1-4476-9CBF-25B75E296341}

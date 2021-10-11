@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="{{ Culture.Name }}">
+<head>
+    <meta charset="utf-8">
+    <title>{% page_title Site.SiteName, position: "before", separator: " - " %}</title>
+    
+     {% resources type: "Meta" %}
+     {% link type:"image/x-icon", rel:"shortcut icon", href:"~/TheAgencyTheme/favicon.ico" %}
+    <!-- INSERT REQUIRED RESOURCES HERE -->
+    <link href='https://fonts.googleapis.com/css?family=Raleway:400,500,600,700,800,900' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic' rel='stylesheet' type='text/css'>
+    {% script name:"TheMusicBandTheme-fontawesome-js", version:"5.15.3", at:"Head" %}    
+    {% style name:"TheMusicBandTheme-bootstrap", version:"5.0.1" %}
+    {% style name:"TheMusicBandTheme-oc", version:"1.0.0" %}          
+    {% script name:"TheMusicBandTheme-popper-js", version:"1.0.0", at:"Foot" %}
+    {% script name:"TheMusicBandTheme-bootstrap-js", version:"5.0.1", at:"Foot" %}
+    {% script name:"TheMusicBandTheme-back-to-top-js", version:"1.0.0", at:"Foot" %}
+    {% script name:"TheMusicBandTheme-scroll-js", version:"1.0.0", at:"Foot" %}
+    {% script name:"TheMusicBandTheme-gumshoe-js", version:"1.0.0", at:"Foot" %}
+    {% script name:"TheMusicBandTheme-main-js", version:"1.0.0", at:"Foot" %}
+    {% resources type: "HeadLink" %}
+    {% resources type: "Stylesheet" %}
+    {% resources type: "HeadScript" %}
+    
+</head>
+<body dir="{{ Culture.Dir }}" id="page-top">
+
+    <!-- ******HEADER****** --> 
+    <header id="header" class="header fixed-top header-scrolled">  
+        <div class="container ">       
+            <nav class="main-nav navbar navbar-expand-md" role="navigation">
+                <button class="navbar-toggler navbar-dark " type="button" data-bs-toggle="collapse" data-bs-target="#navbar-collapse" 
+                aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="toggle-title">Menu</span>
+                    <span class="navbar-toggler-icon"></span>
+                </button>  
+                <div id="navbar-collapse" class="navbar-collapse collapse text-center justify-content-center">
+                    <!-- <ul class="nav navbar-nav">
+                        <li class="nav-item"><a class="nav-link scrollto" href="#promo">Home</a></li>
+                        <li class="nav-item"><a class="nav-link scrollto" href="#gigs">Gigs</a></li>
+                        <li class="nav-item"><a class="nav-link scrollto" href="#music">Music</a></li>                                            
+                        <li class="nav-item"><a class="nav-link scrollto" href="#about">About</a></li>
+                        <li class="nav-item"><a class="nav-link scrollto" href="#merch">Merch</a></li> 
+                        <li class="nav-item"><a class="nav-link scrollto" href="#contact">Contact</a></li>
+                    </ul> -->
+                    {% shape "menu", alias: "alias:main-menu", cache_id: "main-menu", cache_tag: "alias:main-menu" %}
+                    <!--//nav-->
+                </div><!--//navabr-collapse-->
+            </nav><!--//main-nav-->
+        </div><!--//container-->
+    </header><!--//header-->
+
+    {% render_section "Header", required: false %}
+    {% render_body %}   
+    <footer class="footer">        
+        <div class="container">
+            <div class="footer-content text-center">
+                {% render_section "Footer", required: false %}                 
+            </div><!--//footer-content--> 
+        </div><!--//container-->       
+    </footer>
+    
+    {% resources type: "FootScript" %}
+</body>
+</html>

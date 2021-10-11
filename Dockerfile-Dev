@@ -1,0 +1,26 @@
+ # FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build-env
+ # LABEL stage=build-env
+ # WORKDIR /app
+
+# run the following to get a cert for https; also note the password
+# dotnet dev-certs https -ep %USERPROFILE%\.aspnet\https\aspnetapp.pfx -p Fordfocus2@@5
+# dotnet dev-certs https --trust
+
+
+# Copy and build
+ # COPY . .
+ # RUN dotnet publish ./src/OrchardCore.Cms.Web -c Release -o ./build/release --framework net5.0
+
+# Build runtime image
+FROM mcr.microsoft.com/dotnet/aspnet:5.0
+EXPOSE 80
+EXPOSE 443
+ENV ASPNETCORE_URLS http://+:80;https://+:443
+ENV ASPNETCORE_HTTP_PORT=8000 
+ENV ASPNETCORE_HTTPS_PORT=8001 
+ENV ASPNETCORE_Kestrel__Certificates__Default__Password="Fordfocus2@@5" 
+ENV ASPNETCORE_Kestrel__Certificates__Default__Path=/https/dockerimage.pfx
+WORKDIR /app
+# COPY --from=build-env ./build/release .
+COPY /src/OrchardCore.Cms.Web/bin/Release/net5.0/publish .
+ENTRYPOINT ["dotnet", "OrchardCore.Cms.Web.dll"]

@@ -1,0 +1,7 @@
+<div class="navbar-collapse collapse text-center justify-content-center" id="navbar-collapse">
+    <ul class="nav navbar-nav">
+        {% for item in Model.Items %}
+        {{ item | shape_render }}
+        {% endfor %}
+    </ul>
+</div>
