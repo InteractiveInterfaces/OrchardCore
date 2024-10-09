@@ -5,38 +5,41 @@ The auto-setup module allows to automatically install the application/tenants on
 ## JSON Configuration Parameters
 
 Auto-Setup parameters are defined in appsettings.json. Example excerpt:
+
 ```json
 "OrchardCore": {
     "OrchardCore_AutoSetup": {
-    "AutoSetupPath": "",
-    "Tenants": [
-        {
-            "ShellName": "Default",
-            "SiteName": "AutoSetup Example",
-            "SiteTimeZone": "Europe/Amsterdam",
-            "AdminUsername": "admin",
-            "AdminEmail": "info@orchardproject.net",
-            "AdminPassword": "OrchardCoreRules1!",
-            "DatabaseProvider": "Sqlite",
-            "DatabaseConnectionString": "",
-            "DatabaseTablePrefix": "",
-            "RecipeName": "SaaS"
-        },
-        {
-            "ShellName": "AutoSetupTenant",
-            "SiteName": "AutoSetup Tenant",
-            "SiteTimeZone": "Europe/Amsterdam",
-            "AdminUsername": "tenantadmin",
-            "AdminEmail": "tenant@orchardproject.net",
-            "AdminPassword": "OrchardCoreRules1!",
-            "DatabaseProvider": "Sqlite",
-            "DatabaseConnectionString": "",
-            "DatabaseTablePrefix": "tenant",
-            "RecipeName": "Agency",
-            "RequestUrlHost": "",
-            "RequestUrlPrefix": "tenant"
-        }
-    ]
+        "AutoSetupPath": "",
+        "Tenants": [
+            {
+                "ShellName": "Default",
+                "SiteName": "AutoSetup Example",
+                "SiteTimeZone": "Europe/Amsterdam",
+                "AdminUsername": "admin",
+                "AdminEmail": "info@orchardproject.net",
+                "AdminPassword": "OrchardCoreRules1!",
+                "DatabaseProvider": "Sqlite",
+                "DatabaseConnectionString": "",
+                "DatabaseTablePrefix": "",
+                "RecipeName": "SaaS"
+            },
+            {
+                "ShellName": "AutoSetupTenant",
+                "SiteName": "AutoSetup Tenant",
+                "SiteTimeZone": "Europe/Amsterdam",
+                "AdminUsername": "tenantadmin",
+                "AdminEmail": "tenant@orchardproject.net",
+                "AdminPassword": "OrchardCoreRules1!",
+                "DatabaseProvider": "Sqlite",
+                "DatabaseConnectionString": "",
+                "DatabaseTablePrefix": "tenant",
+                "RecipeName": "Agency",
+                "RequestUrlHost": "",
+                "RequestUrlPrefix": "tenant",
+                "FeatureProfile": "my-profile"
+            }
+        ]
+    }
 }
 ```
 
@@ -58,6 +61,7 @@ Auto-Setup parameters are defined in appsettings.json. Example excerpt:
 | `RecipeName` | The tenant installation Recipe name. |
 | `RequestUrlHost` | The tenant host url. |
 | `RequestUrlPrefix` | The tenant url prefix. |
+| `FeatureProfile` | Optionally, the name of the feature profile used by default. Only applicable if the "Feature Profiles" feature is used. See the [documentation of the Tenants module](../Tenants/README.md#feature-profiles) for details. |
 
 !!! note
     Tenants array must contain the root tenant with `ShellName` equals to `Default`.  
@@ -66,9 +70,28 @@ Auto-Setup parameters are defined in appsettings.json. Example excerpt:
     `/autosetup` - trigger installation of the Root tenant.
     `/mytenant/autosetup` - auto-install mytenant.
 
-### Environment Variables
+### User Secrets and Environment Variables
 
-Since JSON configuration contains admin-sensitive information, it is recommended to use environment variables instead.
+If your JSON configuration contains sensitive information, or you don't want to commit it to the repository (because e.g. Auto Setup is not utilized by the whole development team), it is recommended to use user secrets or environment variables instead.
+
+[User secrets](https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets#secret-manager) are available during local development, and they are stored as JSON files. This means you can move the whole configuration from `appsettings.json` as-is. Alternatively, you can set each option directly from the command line (this will flatten any existing structures in the `secrets.json` file):
+
+```shell
+cd src/OrchardCore.Cms.Web
+dotnet user-secrets init
+dotnet user-secrets set "OrchardCore:OrchardCore_AutoSetup:Tenants:0:ShellName" "Default"
+dotnet user-secrets set "OrchardCore:OrchardCore_AutoSetup:Tenants:0:SiteName" "AutoSetup Example"
+dotnet user-secrets set "OrchardCore:OrchardCore_AutoSetup:Tenants:0:SiteTimeZone" "Europe/Amsterdam"
+dotnet user-secrets set "OrchardCore:OrchardCore_AutoSetup:Tenants:0:AdminUsername" "admin"
+dotnet user-secrets set "OrchardCore:OrchardCore_AutoSetup:Tenants:0:AdminEmail" "info@orchardproject.net"
+dotnet user-secrets set "OrchardCore:OrchardCore_AutoSetup:Tenants:0:AdminPassword" "OrchardCoreRules1!"
+dotnet user-secrets set "OrchardCore:OrchardCore_AutoSetup:Tenants:0:RecipeName" "SaaS"
+dotnet user-secrets set "OrchardCore:OrchardCore_AutoSetup:Tenants:0:DatabaseProvider" "Sqlite"
+```
+
+If you use a setup like the above when working with the full source code of Orchard Core, then all copies of the source will use it, due to `OrchardCore.Cms.Web` having `UserSecretsId` pre-configured. This is really useful when contributing to Orchard Core. However, if you want to remove this functionality, just remove the `UserSecretsId` element from the given copy's `OrchardCore.Cms.Web.csproj`.
+
+[Environment variables](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/configuration#non-prefixed-environment-variables) are available on both server and local machine. But if you have multiple projects, you have to prefix them to avoid clashes.
 
 ```
 "OrchardCore__OrchardCore_AutoSetup__AutoSetupPath": ""
@@ -102,13 +125,7 @@ For testing purposes, you may add the above environment variables into a "web" p
 Then, start the web app project with the following command:
 
 ```
-dotnet run -f net5.0 --launch-profile web
-```
-
-or 
-
-```
-dotnet run -f netcoreapp3.1 --launch-profile web
+dotnet run --launch-profile web
 ```
 
 ## Enabling Auto Setup Feature
@@ -142,6 +159,7 @@ You should enable the Redis Lock feature in the startup file.
             .AddSetupFeatures("OrchardCore.Redis.Lock", "OrchardCore.AutoSetup");
     }
 ```
+
 Make sure you set the Redis configuration string via an environment variable or a configuration file.
 
 ```
@@ -163,6 +181,7 @@ Lock configuration parameters are optional and can be set via environment variab
 ```
 
 ## Additional information
+
 Please refer to separate sections for additional information on setup:
 
 - [OrchardCore.Setup - setting up an empty site](../Setup/README.md)

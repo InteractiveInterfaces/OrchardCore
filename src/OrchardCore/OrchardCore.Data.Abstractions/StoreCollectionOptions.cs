@@ -1,10 +1,6 @@
-using System;
-using System.Collections.Generic;
+namespace OrchardCore.Data;
 
-namespace OrchardCore.Data
+public class StoreCollectionOptions
 {
-    public class StoreCollectionOptions
-    {
-        public HashSet<string> Collections {get; } = new HashSet<string>();  
-    }
+    public HashSet<string> Collections { get; } = [];
 }
