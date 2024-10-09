@@ -17,6 +17,6 @@ IF %ERRORLEVEL% NEQ 0 (
 )
 
 REM Run container
-docker run --rm -it -p 8000:80 -p 8001:443 -v %USERPROFILE%\.aspnet\https:/https/ intintcms-dev
+docker run --rm -it -p 8000:80 -p 8001:443 -v %USERPROFILE%\.aspnet\https:/https/ -v %USERPROFILE%\.aspnet\appdata:/app/App_Data intintcms-dev
 
 :endscirpt
