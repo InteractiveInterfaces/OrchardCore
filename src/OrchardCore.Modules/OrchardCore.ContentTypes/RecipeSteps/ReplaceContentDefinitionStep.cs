@@ -1,92 +1,87 @@
-using System;
-using System.Threading.Tasks;
+using System.Text.Json.Nodes;
 using OrchardCore.ContentManagement.Metadata;
-using OrchardCore.ContentManagement.Metadata.Models;
 using OrchardCore.ContentManagement.Metadata.Records;
 using OrchardCore.Recipes.Models;
 using OrchardCore.Recipes.Services;
 
-namespace OrchardCore.ContentTypes.RecipeSteps
+namespace OrchardCore.ContentTypes.RecipeSteps;
+
+/// <summary>
+/// This recipe step replaces content definition records.
+/// </summary>
+public sealed class ReplaceContentDefinitionStep : IRecipeStepHandler
 {
-    /// <summary>
-    /// This recipe step replaces content definition records.
-    /// </summary>
-    public class ReplaceContentDefinitionStep : IRecipeStepHandler
+    private readonly IContentDefinitionManager _contentDefinitionManager;
+
+    public ReplaceContentDefinitionStep(IContentDefinitionManager contentDefinitionManager)
     {
-        private readonly IContentDefinitionManager _contentDefinitionManager;
+        _contentDefinitionManager = contentDefinitionManager;
+    }
 
-        public ReplaceContentDefinitionStep(IContentDefinitionManager contentDefinitionManager)
+    public async Task ExecuteAsync(RecipeExecutionContext context)
+    {
+        if (!string.Equals(context.Name, "ReplaceContentDefinition", StringComparison.OrdinalIgnoreCase))
         {
-            _contentDefinitionManager = contentDefinitionManager;
+            return;
         }
 
-        public Task ExecuteAsync(RecipeExecutionContext context)
+        var step = context.Step.ToObject<ReplaceContentDefinitionStepModel>();
+
+        // Delete existing parts first, as deleting them later will clear any imported content types using them.
+        foreach (var contentPart in step.ContentParts)
         {
-            if (!String.Equals(context.Name, "ReplaceContentDefinition", StringComparison.OrdinalIgnoreCase))
-            {
-                return Task.CompletedTask;
-            }
-
-            var step = context.Step.ToObject<ReplaceContentDefinitionStepModel>();
-
-            // Delete existing parts first, as deleting them later will clear any imported content types using them.
-            foreach (var contentPart in step.ContentParts)
-            {
-                _contentDefinitionManager.DeletePartDefinition(contentPart.Name);
-            }
-
-            foreach (var contentType in step.ContentTypes)
-            {
-                _contentDefinitionManager.DeleteTypeDefinition(contentType.Name);
-                AlterContentType(contentType);
-            }
-
-            foreach (var contentPart in step.ContentParts)
-            {
-                AlterContentPart(contentPart);
-            }
-
-            return Task.CompletedTask;
+            await _contentDefinitionManager.DeletePartDefinitionAsync(contentPart.Name);
         }
 
-        private void AlterContentType(ContentTypeDefinitionRecord record)
+        foreach (var contentType in step.ContentTypes)
         {
-            _contentDefinitionManager.AlterTypeDefinition(record.Name, builder =>
-            {
-                if (!String.IsNullOrEmpty(record.DisplayName))
-                {
-                    builder.DisplayedAs(record.DisplayName);
-                    builder.MergeSettings(record.Settings);
-                }
-
-                foreach (var part in record.ContentTypePartDefinitionRecords)
-                {
-                    builder.WithPart(part.Name, part.PartName, partBuilder => partBuilder.MergeSettings(part.Settings));
-                }
-            });
+            await _contentDefinitionManager.DeleteTypeDefinitionAsync(contentType.Name);
+            await AlterContentTypeAsync(contentType);
         }
 
-        private void AlterContentPart(ContentPartDefinitionRecord record)
+        foreach (var contentPart in step.ContentParts)
         {
-            _contentDefinitionManager.AlterPartDefinition(record.Name, builder =>
+            await AlterContentPartAsync(contentPart);
+        }
+    }
+
+    private async Task AlterContentTypeAsync(ContentTypeDefinitionRecord record)
+    {
+        await _contentDefinitionManager.AlterTypeDefinitionAsync(record.Name, builder =>
+        {
+            if (!string.IsNullOrEmpty(record.DisplayName))
             {
+                builder.DisplayedAs(record.DisplayName);
                 builder.MergeSettings(record.Settings);
+            }
 
-                foreach (var field in record.ContentPartFieldDefinitionRecords)
-                {
-                    builder.WithField(field.Name, fieldBuilder =>
-                    {
-                        fieldBuilder.OfType(field.FieldName);
-                        fieldBuilder.MergeSettings(field.Settings);
-                    });
-                }
-            });
-        }
+            foreach (var part in record.ContentTypePartDefinitionRecords)
+            {
+                builder.WithPart(part.Name, part.PartName, partBuilder => partBuilder.MergeSettings(part.Settings));
+            }
+        });
+    }
 
-        private class ReplaceContentDefinitionStepModel
+    private async Task AlterContentPartAsync(ContentPartDefinitionRecord record)
+    {
+        await _contentDefinitionManager.AlterPartDefinitionAsync(record.Name, builder =>
         {
-            public ContentTypeDefinitionRecord[] ContentTypes { get; set; } = Array.Empty<ContentTypeDefinitionRecord>();
-            public ContentPartDefinitionRecord[] ContentParts { get; set; } = Array.Empty<ContentPartDefinitionRecord>();
-        }
+            builder.MergeSettings(record.Settings);
+
+            foreach (var field in record.ContentPartFieldDefinitionRecords)
+            {
+                builder.WithField(field.Name, fieldBuilder =>
+                {
+                    fieldBuilder.OfType(field.FieldName);
+                    fieldBuilder.MergeSettings(field.Settings);
+                });
+            }
+        });
+    }
+
+    private sealed class ReplaceContentDefinitionStepModel
+    {
+        public ContentTypeDefinitionRecord[] ContentTypes { get; set; } = [];
+        public ContentPartDefinitionRecord[] ContentParts { get; set; } = [];
     }
 }
