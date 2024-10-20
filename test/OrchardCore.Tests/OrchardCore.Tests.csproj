@@ -87,6 +87,12 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Localization\zh-CN\OrchardCore.Tests.po">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
   <Import Project="..\..\src\OrchardCore.Build\OrchardCore.Commons.targets" />
 
 </Project>

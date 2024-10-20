@@ -1,4 +1,4 @@
- # FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build-env
+ # FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
  # LABEL stage=build-env
  # WORKDIR /app
 
@@ -12,7 +12,7 @@
  # RUN dotnet publish ./src/OrchardCore.Cms.Web -c Release -o ./build/release --framework net5.0
 
 # Build runtime image
-FROM mcr.microsoft.com/dotnet/aspnet:5.0
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
 EXPOSE 80
 EXPOSE 443
 ENV ASPNETCORE_URLS http://+:80;https://+:443
@@ -22,5 +22,5 @@ ENV ASPNETCORE_Kestrel__Certificates__Default__Password="Fordfocus2005"
 ENV ASPNETCORE_Kestrel__Certificates__Default__Path=/https/intintsslfordockerimage.pfx
 WORKDIR /app
 # COPY --from=build-env ./build/release .
-COPY src/OrchardCore.Cms.Web/bin/Release/net5.0/publish .
+COPY src/OrchardCore.Cms.Web/bin/Release/net8.0/publish .
 ENTRYPOINT ["dotnet", "OrchardCore.Cms.Web.dll"]

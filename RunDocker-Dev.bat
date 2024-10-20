@@ -1,5 +1,5 @@
 REM Publish web project; 
-dotnet publish -c Release -f net5.0 
+dotnet publish -c Release -f net8.0 
 
 echo off
 IF %ERRORLEVEL% NEQ 0 (  
